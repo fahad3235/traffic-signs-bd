@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traffic Signs BD</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-inner">
+    <div>
+      <h1 id="appTitle" data-i18n="appTitle">Traffic Signs BD</h1>
+      <p class="subtitle" data-i18n="appSub">Learn Bangladesh road signs &mdash; then test yourself</p>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" id="langEn" class="lang-btn active">EN</button>
+      <button type="button" id="langBn" class="lang-btn">&#2476;&#2494;&#2434;&#2482;&#2494;</button>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button type="button" class="tab-btn active" data-tab="learn" data-i18n="tabLearn">Learn</button>
+    <button type="button" class="tab-btn" data-tab="quiz" data-i18n="tabQuiz">Quiz</button>
+    <button type="button" class="tab-btn" data-tab="data" data-i18n="tabData">My data</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============================ LEARN ============================ -->
+  <section id="learnScreen">
+    <div class="card progress-card">
+      <div class="progress-head">
+        <h2 data-i18n="progressTitle">Your progress</h2>
+        <span id="progressPct" class="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar"><span id="progressBar" class="progress-fill" style="width:0%"></span></div>
+      <p id="progressText" class="muted"></p>
+      <div id="catProgress" class="cat-progress"></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="search" id="searchInput" data-i18n-ph="searchPh" placeholder="Search signs&hellip; e.g. stop, parking" aria-label="Search signs">
+      <div class="filters" role="group" aria-label="Filter by category">
+        <button type="button" class="filter-btn active" data-cat="all" data-i18n="filterAll">All</button>
+        <button type="button" class="filter-btn" data-cat="warning" data-i18n="filterWarning">Warning</button>
+        <button type="button" class="filter-btn" data-cat="regulatory" data-i18n="filterRegulatory">Regulatory</button>
+        <button type="button" class="filter-btn" data-cat="mandatory" data-i18n="filterMandatory">Mandatory</button>
+        <button type="button" class="filter-btn" data-cat="informative" data-i18n="filterInformative">Informative</button>
+      </div>
+      <span id="signsCount" class="muted"></span>
+    </div>
+
+    <div id="signGrid" class="sign-grid"></div>
+
+    <div id="noResults" class="card empty hidden">
+      <p data-i18n="noResults">No signs match your search.</p>
+      <p class="muted" data-i18n="noResultsHint">Try a different word, or clear the category filter.</p>
+      <button type="button" id="clearSearchBtn" class="btn" data-i18n="clearSearch">Clear search</button>
+    </div>
+  </section>
+
+  <!-- ============================ QUIZ ============================ -->
+  <section id="quizScreen" class="hidden">
+    <div id="quizIntro" class="card">
+      <h2 data-i18n="quizTitle">Sign quiz</h2>
+      <p data-i18n="quizIntro">10 questions. Identify the sign or pick the right meaning. 10 points per correct answer, +5 bonus from a 3-answer streak.</p>
+      <p class="muted"><span data-i18n="quizBest">Best score</span>: <strong id="quizBestLive">-</strong></p>
+      <button type="button" id="quizStartBtn" class="btn primary" data-i18n="quizStart">Start quiz</button>
+    </div>
+
+    <div id="quizPlay" class="card hidden">
+      <div class="quiz-top">
+        <span id="quizQ"></span>
+        <span><span data-i18n="quizScore">Score</span>: <strong id="quizScoreLive">0</strong></span>
+        <span>Streak: <strong id="quizStreakLive">0</strong></span>
+      </div>
+      <p id="quizPrompt" class="quiz-prompt"></p>
+      <div id="quizAsk" class="quiz-ask"></div>
+      <div id="quizOptions" class="quiz-options"></div>
+      <p id="quizFeedback" class="feedback hidden"></p>
+      <button type="button" id="quizNextBtn" class="btn primary hidden" data-i18n="quizNext">Next</button>
+    </div>
+
+    <div id="quizResults" class="card hidden">
+      <h2 data-i18n="quizFinish">See results</h2>
+      <p id="newBestBadge" class="badge hidden" data-i18n="quizNewBest">New best!</p>
+      <dl class="results">
+        <div><dt data-i18n="quizScore">Score</dt><dd id="resScore">0</dd></div>
+        <div><dt data-i18n="quizCorrect">Correct</dt><dd id="resCorrect">0/0</dd></div>
+        <div><dt data-i18n="quizAccuracy">Accuracy</dt><dd id="resAccuracy">0%</dd></div>
+        <div><dt data-i18n="quizBestStreak">Best streak</dt><dd id="resStreak">0</dd></div>
+        <div><dt data-i18n="quizGrade">Grade</dt><dd id="resGrade">-</dd></div>
+        <div><dt data-i18n="quizBest">Best score</dt><dd id="resBest">-</dd></div>
+      </dl>
+      <div class="btn-row">
+        <button type="button" id="quizAgainBtn" class="btn primary" data-i18n="quizAgain">Play again</button>
+        <button type="button" id="quizBackBtn" class="btn" data-i18n="quizBack">Back to learn</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="quizHistory">Recent quizzes</h2>
+      <p id="quizHistoryEmpty" class="muted" data-i18n="quizHistoryEmpty">No quizzes yet. Take the quiz to see your scores here.</p>
+      <ul id="quizHistoryList" class="history"></ul>
+    </div>
+  </section>
+
+  <!-- ============================ DATA ============================ -->
+  <section id="dataScreen" class="hidden">
+    <div class="card">
+      <h2 data-i18n="dataTitle">My data</h2>
+      <p data-i18n="dataIntro">Your learned signs, best score and quiz history are stored only in this browser (localStorage). Export a backup, or import one.</p>
+      <label for="exportBox" class="field-label">Backup (JSON)</label>
+      <textarea id="exportBox" rows="6" readonly></textarea>
+      <div class="btn-row">
+        <button type="button" id="exportBtn" class="btn" data-i18n="exportBtn">Export my data (JSON)</button>
+      </div>
+      <label for="importBox" class="field-label" data-i18n="importBtn">Import data (JSON)</label>
+      <textarea id="importBox" rows="6" data-i18n-ph="importPh" placeholder="Paste exported JSON here&hellip;"></textarea>
+      <div class="btn-row">
+        <button type="button" id="importBtn" class="btn" data-i18n="importBtn">Import data (JSON)</button>
+      </div>
+      <p id="importMsg" class="msg"></p>
+    </div>
+
+    <div class="card danger">
+      <h2 data-i18n="eraseTitle">Erase everything</h2>
+      <p data-i18n="eraseHint">Type DELETE to erase all learned signs, scores and history.</p>
+      <input type="text" id="eraseInput" placeholder="DELETE" autocomplete="off">
+      <div class="btn-row">
+        <button type="button" id="eraseBtn" class="btn danger-btn" data-i18n="eraseBtn">Erase all data</button>
+      </div>
+      <p id="eraseMsg" class="msg"></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p data-i18n="footerNote">Offline learning aid &mdash; not an official BRTA publication. Sign shapes and meanings follow the standard signs used in Bangladesh; always follow the actual sign on the road and the official learner handbook.</p>
+</footer>
+
+<!-- ============================ MODAL ============================ -->
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button type="button" id="modalClose" class="modal-close" aria-label="Close">&times;</button>
+    <div id="modalArt" class="modal-art"></div>
+    <h2 id="modalName"></h2>
+    <h3 data-i18n="meaningLabel">What it means</h3>
+    <p id="modalMeaning"></p>
+    <h3 data-i18n="actionLabel">What to do</h3>
+    <p id="modalAction"></p>
+    <button type="button" id="modalLearnBtn" class="btn"></button>
+  </div>
+</div>
+
+<script src="js/signs.js"></script>
+<script src="js/logic.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
